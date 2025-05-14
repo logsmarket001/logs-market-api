@@ -1,22 +1,39 @@
 //@ts-nocheck
-import express, {
+import  {
   type Request,
   type Response,
   type NextFunction,
 } from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import authRoutes from "./routes/auth";
-import userRoutes from "./routes/users";
-import productRoutes from "./routes/products";
-import orderRoutes from "./routes/orders";
-import depositRoutes from "./routes/deposits";
-import { errorHandler } from "./middleware/errorHandler";
-import chatRoutes from "./routes/chat";
-import webhookRoutes from "./routes/webhook";
-import bodyParser from "body-parser";
-import { startCronJobs } from "./services/cronService";
+// import cors from "cors";
+// import mongoose from "mongoose";
+// import dotenv from "dotenv";
+// import authRoutes from "./routes/auth";
+// import userRoutes from "./routes/users";
+// import productRoutes from "./routes/products";
+// import orderRoutes from "./routes/orders";
+// import depositRoutes from "./routes/deposits";
+// import { errorHandler } from "./middleware/errorHandler";
+// import chatRoutes from "./routes/chat";
+// import webhookRoutes from "./routes/webhook";
+// import bodyParser from "body-parser";
+// import { startCronJobs } from "./services/cronService";
+
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/users");
+const productRoutes = require("./routes/products");
+const orderRoutes = require("./routes/orders");
+const depositRoutes = require("./routes/deposits");
+const chatRoutes = require("./routes/chat");
+const webhookRoutes = require("./routes/webhook");
+const { errorHandler } = require("./middleware/errorHandler");
+const { startCronJobs } = require("./services/cronService");
+
 // Load environment variables
 dotenv.config();
 
