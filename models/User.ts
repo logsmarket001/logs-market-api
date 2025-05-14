@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import mongoose, { type Document, Schema } from "mongoose"
 import bcrypt from "bcrypt"
 

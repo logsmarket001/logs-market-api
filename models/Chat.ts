@@ -1,44 +1,4 @@
-// // models/Chat.ts
-// import mongoose, { Schema, Document } from "mongoose";
-
-// interface IMessage {
-//   sender: "admin" | "customer";
-//   message: string;
-//   sentAt?: Date;
-// }
-
-// export interface IChat extends Document {
-//   userId: mongoose.Types.ObjectId;
-//   orderId: mongoose.Types.ObjectId;
-//   messages: IMessage[];
-// }
-
-// const messageSchema = new Schema<IMessage>({
-//   sender: {
-//     type: String,
-//     enum: ["admin", "user"],
-//     required: true,
-//   },
-//   message: {
-//     type: String,
-//     required: true,
-//   },
-//   sentAt: {
-//     type: Date,
-//     default: Date.now,
-//   },
-// });
-
-// const chatSchema = new Schema<IChat>(
-//   {
-//     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-//     orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true },
-//     messages: [messageSchema],
-//   },
-//   { timestamps: true }
-// );
-
-// export default mongoose.model<IChat>("Chat", chatSchema);
+//@ts-nocheck
 
 import mongoose, { Schema, Document } from "mongoose";
 

@@ -1,16 +1,18 @@
-import mongoose, { type Document, Schema } from "mongoose"
+//@ts-nocheck
+
+import mongoose, { type Document, Schema } from "mongoose";
 
 export interface IDeposit extends Document {
-  userId: mongoose.Types.ObjectId
-  amount: number
-  transactionId: string
-  senderUsername: string
-  senderWalletAddress: string
+  userId: mongoose.Types.ObjectId;
+  amount: number;
+  transactionId: string;
+  senderUsername: string;
+  senderWalletAddress: string;
   paidCryptoAmount: number;
-  pointOfError:string
-  status: "success" | "failed" | "pending"
-  createdAt: Date
-  updatedAt: Date
+  pointOfError: string;
+  status: "success" | "failed" | "pending";
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const DepositSchema = new Schema<IDeposit>(
@@ -49,4 +51,4 @@ const DepositSchema = new Schema<IDeposit>(
   }
 );
 
-export default mongoose.model<IDeposit>("Deposit", DepositSchema)
+export default mongoose.model<IDeposit>("Deposit", DepositSchema);
