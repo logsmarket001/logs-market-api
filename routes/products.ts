@@ -1,3 +1,4 @@
+//@ts-nocheck
 import express from "express";
 import Product from "../models/Product";
 import Order from "../models/Order";

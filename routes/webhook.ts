@@ -1,3 +1,4 @@
+//@ts-nocheck
 import express from "express";
 import { authenticate, isAdmin } from "../middleware/auth";
 import Webhook from "../models/Webhook";

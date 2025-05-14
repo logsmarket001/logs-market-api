@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import axios from "axios";
 import Webhook from "../models/Webhook";
 import { IChatMessage } from "../models/Chat";

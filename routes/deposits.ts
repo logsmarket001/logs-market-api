@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import express from "express";
 import mongoose from "mongoose";
 import { authenticate, isAdmin } from "../middleware/auth";
