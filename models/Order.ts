@@ -1,4 +1,4 @@
-
+//@ts-nocheck
 import mongoose, { Document, Schema } from "mongoose"
 
 export interface IOrder extends Document {

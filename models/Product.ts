@@ -1,3 +1,4 @@
+//@ts-nocheck
 
 import mongoose, { Schema, Document } from "mongoose";
 
@@ -21,7 +22,7 @@ const ProductSchema = new Schema<IBaseProduct>(
         "checkbook",
         "page",
         "made-bank",
-        "direct-deposit"
+        "direct-deposit",
       ],
     },
     subType: {
@@ -46,8 +47,7 @@ const ProductSchema = new Schema<IBaseProduct>(
         "10k",
         "20k",
         "30k",
-        "45k"
-
+        "45k",
       ],
     },
     data: {

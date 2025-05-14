@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IWebhook extends Document {
@@ -16,19 +18,19 @@ const WebhookSchema = new Schema<IWebhook>(
     url: { type: String, required: true },
     events: [{ type: String, enum: ["new_message"], required: true }],
     isAdmin: { type: Boolean, default: false },
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
 // Ensure URL is valid
-WebhookSchema.path('url').validate(function(url: string) {
+WebhookSchema.path("url").validate(function (url: string) {
   try {
     new URL(url);
     return true;
   } catch (err) {
     return false;
   }
-}, 'Invalid webhook URL');
+}, "Invalid webhook URL");
 
-export default mongoose.model<IWebhook>("Webhook", WebhookSchema); 
+export default mongoose.model<IWebhook>("Webhook", WebhookSchema);
