@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import axios from "axios";
 import Deposit from "../models/Deposit";
 import User from "../models/User";

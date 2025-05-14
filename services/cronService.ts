@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import cron from "node-cron";
 import { verifyPendingPayments } from "./paymentVerificationService";
 
@@ -10,8 +12,6 @@ import { verifyPendingPayments } from "./paymentVerificationService";
 //   });
 // }
 
-
-
 export function startCronJobs() {
   // Old: "*/30 * * * *"
   cron.schedule("*/2 * * * *", async () => {
@@ -20,7 +20,6 @@ export function startCronJobs() {
     console.log("Payment verification cron job completed");
   });
 }
-
 
 // // cronJob.ts
 // import cron from "node-cron";

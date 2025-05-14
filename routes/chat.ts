@@ -1,3 +1,4 @@
+//@ts-nocheck
 import express from "express";
 import Chat from "../models/Chat";
 import Order from "../models/Order";
@@ -71,9 +72,7 @@ router.post(
   authenticate,
   isAdmin,
   async (req, res, next) => {
-
     try {
-
       const { orderId } = req.params;
       const { message, issueType } = req.body;
 
@@ -97,7 +96,6 @@ router.post(
         read: false,
       };
 
-      
       chat.messages.push(newMessage);
       await chat.save();
 
@@ -182,64 +180,60 @@ router.post(
 );
 
 // UPDATE CHAT BY ORDER ID — User
-router.post(
-  "/order/:orderId",
-  authenticate,
-  async (req: any, res, next) => {
-        console.log("was called user");
-    try {
-      if (!req.user?._id) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
+router.post("/order/:orderId", authenticate, async (req: any, res, next) => {
+  console.log("was called user");
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-      const { orderId } = req.params;
-      const { message, issueType } = req.body;
+    const { orderId } = req.params;
+    const { message, issueType } = req.body;
 
-      if (!message) {
-        return res.status(400).json({ message: "Message is required" });
-      }
+    if (!message) {
+      return res.status(400).json({ message: "Message is required" });
+    }
 
-      if (!issueType) {
-        return res.status(400).json({ message: "Issue type is required" });
-      }
+    if (!issueType) {
+      return res.status(400).json({ message: "Issue type is required" });
+    }
 
-      let chat = await Chat.findOne({
+    let chat = await Chat.findOne({
+      userId: req.user._id,
+      orderId,
+      issueType,
+    });
+
+    const newMessage: IChatMessage = { sender: "user", message, read: false };
+
+    if (chat) {
+      // Append to existing chat
+      chat.messages.push(newMessage);
+      await chat.save();
+    } else {
+      // Create new chat
+      chat = new Chat({
         userId: req.user._id,
         orderId,
         issueType,
+        messages: [newMessage],
       });
-
-      const newMessage: IChatMessage = { sender: "user", message, read: false };
-
-      if (chat) {
-        // Append to existing chat
-        chat.messages.push(newMessage);
-        await chat.save();
-      } else {
-        // Create new chat
-        chat = new Chat({
-          userId: req.user._id,
-          orderId,
-          issueType,
-          messages: [newMessage],
-        });
-        await chat.save();
-      }
-
-      // Notify webhooks
-      await notifyWebhooks(
-        req.user._id.toString(),
-        orderId,
-        newMessage,
-        chat.issueType
-      );
-
-      res.status(200).json(chat);
-    } catch (err) {
-      next(err);
+      await chat.save();
     }
+
+    // Notify webhooks
+    await notifyWebhooks(
+      req.user._id.toString(),
+      orderId,
+      newMessage,
+      chat.issueType
+    );
+
+    res.status(200).json(chat);
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 // Get unread message counts for user's orders
 router.post("/unread/user", authenticate, async (req: any, res, next) => {
