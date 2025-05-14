@@ -1,0 +1,39 @@
+{
+  "name": "securetrade-backend",
+  "version": "1.0.0",
+  "description": "Backend for SecureTrade platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only index.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@types/node-cron": "^3.0.11",
+    "axios": "^1.9.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.6.3",
+    "node-cron": "^4.0.4",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.1",
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/next": "^8.0.7",
+    "@types/node": "^20.8.9",
+    "@types/nodemailer": "^6.4.13",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2",
+    "vercel-cron": "^1.3.0"
+  }
+}
