@@ -44,10 +44,10 @@ export async function verifyPayment(paymentId: string): Promise<void> {
     if (newStatus === "success") {
       const user = await User.findById(deposit.userId);
       if (user) {
-        // Convert all values to numbers and perform numeric operations
-        const currentBalance = +user.balance || 0;
-        const currentPendingBalance = +user.pendingBalance || 0;
-        const depositAmount = +deposit.amount || 0;
+        // Convert all values to numbers explicitly using Number()
+        const currentBalance = Number(user.balance) || 0;
+        const currentPendingBalance = Number(user.pendingBalance) || 0;
+        const depositAmount = Number(deposit.amount) || 0;
 
         console.log("Before update:", {
           currentBalance,
@@ -60,11 +60,10 @@ export async function verifyPayment(paymentId: string): Promise<void> {
           },
         });
 
-        // Perform numeric operations
-        user.balance = currentBalance + depositAmount;
-        user.pendingBalance = Math.max(
-          0,
-          currentPendingBalance - depositAmount
+        // Perform numeric operations with explicitly converted numbers
+        user.balance = Number(currentBalance + depositAmount);
+        user.pendingBalance = Number(
+          Math.max(0, currentPendingBalance - depositAmount)
         );
 
         console.log("After update:", {
@@ -96,7 +95,7 @@ export async function verifyPayment(paymentId: string): Promise<void> {
 //         let status = "pending";
 //         let paidCryptoAmount = +deposit.paidCryptoAmount || 0;
 
-//         if (deposit.transactionId === "4845873354") {
+//         if (deposit.transactionId === "5666195823") {
 //           console.log("Test payment ID detected - forcing success status");
 //           status = "finished";
 //         } else {
