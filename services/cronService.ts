@@ -14,7 +14,7 @@ import { verifyPendingPayments } from "./paymentVerificationService";
 
 export function startCronJobs() {
   // Old: "*/30 * * * *"
-  cron.schedule("*/2 * * * *", async () => {
+  cron.schedule("*/30 * * * *", async () => {
     console.log("Running payment verification cron job...");
     await verifyPendingPayments();
     console.log("Payment verification cron job completed");
