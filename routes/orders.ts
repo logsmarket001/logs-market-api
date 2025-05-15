@@ -16,7 +16,6 @@ router.post("/", authenticate, async (req, res, next) => {
   try {
     const { productId, status, data } = req.body;
 
- 
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -26,16 +25,13 @@ router.post("/", authenticate, async (req, res, next) => {
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-   
     const user = await User.findById(req.user?._id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-  
     if (user.balance < parseFloat(product.data.price)) {
-       return res.status(400).json({ message: "Insufficient balance" });
-    } 
-      user.balance -= parseFloat(product.data.price);
-  
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+    user.balance -= parseFloat(product.data.price);
 
     const productSnapshot = {
       subType: product.subType,
@@ -53,10 +49,9 @@ router.post("/", authenticate, async (req, res, next) => {
 
     await order.save({ session });
 
-    await user.save()
+    await user.save();
     await session.commitTransaction();
 
-  
     res.status(201).json(order);
   } catch (err) {
     await session.abortTransaction();
@@ -125,7 +120,6 @@ router.get(
   authenticate,
   isAdmin,
   async (req, res, next) => {
-  
     try {
       const orders = await Order.find()
         .populate("productId userId")
@@ -169,14 +163,13 @@ router.put(
     try {
       const order = await Order.findById(req.params.id);
       if (!order) return res.status(404).json({ message: "Order not found" });
-console.log(req.body);
-      const { trackingID, pageLink ,status,RdpDetails} = req.body;
+      console.log(req.body);
+      const { trackingID, pageLink, status, RdpDetails } = req.body;
 
-   
       if (!trackingID && !pageLink && !status && !RdpDetails) {
-        return res
-          .status(400)
-          .json({ message: "trackingID, pageLink , RdpDetails, or status is required" });
+        return res.status(400).json({
+          message: "trackingID, pageLink , RdpDetails, or status is required",
+        });
       }
 
       // Ensure `order.data` is an object
@@ -189,11 +182,11 @@ console.log(req.body);
       if (pageLink) {
         order.data = { ...order.data, pageLink };
       }
- if (RdpDetails) {
-   order.data = { ...order.data, RdpDetails };
- }
+      if (RdpDetails) {
+        order.data = { ...order.data, RdpDetails };
+      }
       if (status) {
-        order.status = status
+        order.status = status;
       }
 
       order.status = "completed";
@@ -205,5 +198,72 @@ console.log(req.body);
     }
   }
 );
+
+// ✅ USER: Create order with product deletion
+router.post("/with-product-deletion", authenticate, async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { productId, status, data } = req.body;
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (!productId)
+      return res.status(400).json({ message: "Product ID is required" });
+
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const user = await User.findById(req.user?._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.balance < parseFloat(product.data.price)) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+
+    // Deduct the price from user's balance
+    user.balance = Number(user.balance) - parseFloat(product.data.price);
+
+    // Create product snapshot
+    const productSnapshot = {
+      subType: product.subType,
+      mainType: product.mainType,
+      data: product.data,
+    };
+
+    // Create new order
+    const order = new Order({
+      userId: req?.user._id,
+      status,
+      productId,
+      productSnapshot,
+      data: data || {},
+    });
+
+    // Save order
+    await order.save({ session });
+
+    // Save updated user balance
+    await user.save({ session });
+
+    // Delete the product
+    await Product.findByIdAndDelete(productId, { session });
+
+    await session.commitTransaction();
+
+    res.status(201).json({
+      message: "Order created and product deleted successfully",
+      order,
+      deletedProductId: productId,
+    });
+  } catch (err) {
+    await session.abortTransaction();
+    next(err);
+  } finally {
+    session.endSession();
+  }
+});
 
 export default router;
