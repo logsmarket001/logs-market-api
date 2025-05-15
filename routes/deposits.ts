@@ -103,10 +103,10 @@ router.post("/", authenticate, async (req, res, next) => {
 
     const deposit = new Deposit({
       userId: req.user?._id,
-      amount,
+      amount: Number(amount),
       transactionId,
       senderUsername,
-      paidCryptoAmount,
+      paidCryptoAmount: Number(paidCryptoAmount) || 0,
       status: "pending",
     });
 
@@ -114,7 +114,8 @@ router.post("/", authenticate, async (req, res, next) => {
 
     const user = await User.findById(req.user?._id);
     if (user) {
-      user.pendingBalance += amount;
+      // Ensure numeric operation by explicit conversion
+      user.pendingBalance = Number(user.pendingBalance || 0) + Number(amount);
       await user.save();
     }
 
@@ -172,10 +173,12 @@ router.post("/update-status", async (req, res, next) => {
         });
       }
 
-      user.balance += deposit.amount;
+      // Ensure numeric operations with explicit conversion
+      user.balance = Number(user.balance || 0) + Number(deposit.amount);
 
-      if (user.pendingBalance >= deposit.amount) {
-        user.pendingBalance -= deposit.amount;
+      if (Number(user.pendingBalance) >= Number(deposit.amount)) {
+        user.pendingBalance =
+          Number(user.pendingBalance) - Number(deposit.amount);
       }
 
       await user.save();
@@ -199,8 +202,9 @@ router.post("/update-status", async (req, res, next) => {
     }
 
     // 🔁 CASE: PENDING or OTHER STATUSES
-    if (user.pendingBalance < deposit.amount) {
-      user.pendingBalance += deposit.amount;
+    if (Number(user.pendingBalance) < Number(deposit.amount)) {
+      user.pendingBalance =
+        Number(user.pendingBalance || 0) + Number(deposit.amount);
       await user.save();
     }
 
