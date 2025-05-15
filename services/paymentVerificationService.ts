@@ -81,85 +81,85 @@ export async function verifyPayment(paymentId: string): Promise<void> {
 }
 
 // === Test Handler with Special Payment ID Handling ===
-export async function verifyPendingPayments(): Promise<void> {
-  try {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const pendingDeposits = await Deposit.find({
-      status: "pending",
-      createdAt: { $gte: twentyFourHoursAgo },
-    });
+// export async function verifyPendingPayments(): Promise<void> {
+//   try {
+//     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+//     const pendingDeposits = await Deposit.find({
+//       status: "pending",
+//       createdAt: { $gte: twentyFourHoursAgo },
+//     });
 
-    console.log(`Found ${pendingDeposits.length} pending deposits to verify`);
+//     console.log(`Found ${pendingDeposits.length} pending deposits to verify`);
 
-    for (const deposit of pendingDeposits) {
-      try {
-        let status = "pending";
-        let paidCryptoAmount = +deposit.paidCryptoAmount || 0;
+//     for (const deposit of pendingDeposits) {
+//       try {
+//         let status = "pending";
+//         let paidCryptoAmount = +deposit.paidCryptoAmount || 0;
 
-        if (deposit.transactionId === "4845873354") {
-          console.log("Test payment ID detected - forcing success status");
-          status = "finished";
-        } else {
-          const url = `${API_BASE}/payment/${deposit.transactionId}`;
-          const response = await axios.get(url, {
-            headers: { "x-api-key": API_KEY },
-          });
-          status = response.data.payment_status;
-          paidCryptoAmount = +response.data.actually_paid || 0;
-        }
+//         if (deposit.transactionId === "4845873354") {
+//           console.log("Test payment ID detected - forcing success status");
+//           status = "finished";
+//         } else {
+//           const url = `${API_BASE}/payment/${deposit.transactionId}`;
+//           const response = await axios.get(url, {
+//             headers: { "x-api-key": API_KEY },
+//           });
+//           status = response.data.payment_status;
+//           paidCryptoAmount = +response.data.actually_paid || 0;
+//         }
 
-        let newStatus: "success" | "failed" | "pending" = "pending";
-        if (status === "finished") newStatus = "success";
-        else if (status === "failed") newStatus = "failed";
+//         let newStatus: "success" | "failed" | "pending" = "pending";
+//         if (status === "finished") newStatus = "success";
+//         else if (status === "failed") newStatus = "failed";
 
-        deposit.status = newStatus;
-        deposit.paidCryptoAmount = paidCryptoAmount;
-        await deposit.save();
+//         deposit.status = newStatus;
+//         deposit.paidCryptoAmount = paidCryptoAmount;
+//         await deposit.save();
 
-        if (newStatus === "success") {
-          const user = await User.findById(deposit.userId);
-          if (user) {
-            // Convert all values to numbers and perform numeric operations
-            const currentBalance = +user.balance || 0;
-            const currentPendingBalance = +user.pendingBalance || 0;
-            const depositAmount = +deposit.amount || 0;
+//         if (newStatus === "success") {
+//           const user = await User.findById(deposit.userId);
+//           if (user) {
+//             // Convert all values to numbers and perform numeric operations
+//             const currentBalance = +user.balance || 0;
+//             const currentPendingBalance = +user.pendingBalance || 0;
+//             const depositAmount = +deposit.amount || 0;
 
-            console.log("Before update:", {
-              currentBalance,
-              currentPendingBalance,
-              depositAmount,
-              types: {
-                balance: typeof currentBalance,
-                pending: typeof currentPendingBalance,
-                deposit: typeof depositAmount,
-              },
-            });
+//             console.log("Before update:", {
+//               currentBalance,
+//               currentPendingBalance,
+//               depositAmount,
+//               types: {
+//                 balance: typeof currentBalance,
+//                 pending: typeof currentPendingBalance,
+//                 deposit: typeof depositAmount,
+//               },
+//             });
 
-            // Perform numeric operations
-            user.balance = currentBalance + depositAmount;
-            user.pendingBalance = Math.max(
-              0,
-              currentPendingBalance - depositAmount
-            );
+//             // Perform numeric operations
+//             user.balance = currentBalance + depositAmount;
+//             user.pendingBalance = Math.max(
+//               0,
+//               currentPendingBalance - depositAmount
+//             );
 
-            console.log("After update:", {
-              newBalance: user.balance,
-              newPendingBalance: user.pendingBalance,
-            });
+//             console.log("After update:", {
+//               newBalance: user.balance,
+//               newPendingBalance: user.pendingBalance,
+//             });
 
-            await user.save();
-          }
-        }
+//             await user.save();
+//           }
+//         }
 
-        await sleep(5000);
-      } catch (error) {
-        console.error(
-          `Error processing deposit ${deposit.transactionId}:`,
-          error
-        );
-      }
-    }
-  } catch (error) {
-    console.error("Error in verifyPendingPayments:", error);
-  }
-}
+//         await sleep(5000);
+//       } catch (error) {
+//         console.error(
+//           `Error processing deposit ${deposit.transactionId}:`,
+//           error
+//         );
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error in verifyPendingPayments:", error);
+//   }
+// }
