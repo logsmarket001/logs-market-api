@@ -70,6 +70,38 @@ router.get("/type/:type", authenticate, async (req, res, next) => {
   }
 });
 
+router.get("/admin/admin-type/:type", authenticate, async (req, res, next) => {
+  try {
+    const { type } = req.params;
+    const products = await Product.find({ mainType: type });
+
+    // If user is not authenticated, return all products
+    if (!req.user?._id) {
+      return res.json(products);
+    }
+
+    // Get user's purchased products
+    const userOrders = await Order.find({
+      userId: req.user._id,
+      status: { $in: ["pending", "completed"] },
+    });
+
+    const purchasedProductIds = userOrders.map((order) =>
+      order.productId.toString()
+    );
+
+    // Filter out products that user has already purchased
+    const filteredProducts = products.filter(
+      (product) => !purchasedProductIds.includes(product._id.toString())
+    );
+
+    res.json(filteredProducts);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // Get product by ID
 router.get("/:id", authenticate, async (req, res, next) => {
   try {

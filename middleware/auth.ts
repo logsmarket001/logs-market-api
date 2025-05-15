@@ -28,7 +28,7 @@ export const authenticate = async (
     const token = authHeader.split(" ")[1];
 
     if (!token) {
-      return res.status(401).json({ message: "Authentication required" });
+      return res.status(401).json({ message: "Authentication required no token" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as {

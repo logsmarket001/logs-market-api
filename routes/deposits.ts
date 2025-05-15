@@ -442,4 +442,26 @@ router.get("/seed-test-deposit", async (req, res, next) => {
 //   }
 // });
 
+// Test endpoint to add 5 to dotun's balance
+router.get("/test-dotun-balance", async (req, res, next) => {
+  try {
+    const user = await User.findOne({ username: "dotun" });
+
+    if (!user) {
+      return res.status(404).json({ message: "User dotun not found" });
+    }
+
+    // Ensure numeric operation by explicit conversion
+    user.balance = Number(user.balance || 0) + 5;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Successfully added 5 to dotun's balance",
+      newBalance: user.balance,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
