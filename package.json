@@ -4,7 +4,7 @@
   "description": "Backend for SecureTrade platform",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm install && tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only index.ts",
     "test": "jest"
