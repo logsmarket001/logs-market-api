@@ -381,35 +381,35 @@ router.post("/ipn", express.json(), async (req, res) => {
   res.status(200).end();
 });
 
-// Development seed endpoint - DO NOT USE IN PRODUCTION
-router.get("/seed-test-deposit", async (req, res, next) => {
-  try {
-    const testDeposit = new Deposit({
-      userId: "6820727d332f6c9248a0e453",
-      amount: 40,
-      transactionId: "4976112760", // Add timestamp to make it unique
-      senderUsername: "Admin",
-      paidCryptoAmount: 0.00038554,
-      status: "pending",
-    });
+// // Development seed endpoint - DO NOT USE IN PRODUCTION
+// router.get("/seed-test-deposit", async (req, res, next) => {
+//   try {
+//     const testDeposit = new Deposit({
+//       userId: "6820727d332f6c9248a0e453",
+//       amount: 40,
+//       transactionId: "4976112760", // Add timestamp to make it unique
+//       senderUsername: "Admin",
+//       paidCryptoAmount: 0.00038554,
+//       status: "pending",
+//     });
 
-    await testDeposit.save();
+//     await testDeposit.save();
 
-    const user = await User.findById("6820727d332f6c9248a0e453");
-    if (user) {
-      user.pendingBalance += testDeposit.amount;
-      await user.save();
-    }
+//     const user = await User.findById("6820727d332f6c9248a0e453");
+//     if (user) {
+//       user.pendingBalance += testDeposit.amount;
+//       await user.save();
+//     }
 
-    res.status(201).json({
-      message: "Test deposit created successfully",
-      deposit: testDeposit,
-    });
-    console.log("Test deposit created successfully");
-  } catch (error) {
-    next(error);
-  }
-});
+//     res.status(201).json({
+//       message: "Test deposit created successfully",
+//       deposit: testDeposit,
+//     });
+//     console.log("Test deposit created successfully");
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // // Development delete test deposit endpoint - DO NOT USE IN PRODUCTION
 // router.get("/delete-test-deposit", async (req, res, next) => {

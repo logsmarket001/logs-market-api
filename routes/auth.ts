@@ -159,35 +159,35 @@ export default router
 
 
 
-// // Admin update password
-// router.post("/admin/update-password",authenticate,isAdmin,  async (req, res, next) => {
-//   try {
+// Admin update password
+router.post("/admin/update-password",authenticate,isAdmin,  async (req, res, next) => {
+  try {
    
-//     const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword } = req.body;
 
-//     // Assuming you're using auth middleware that sets req.user.id
-//     const user = await User.findOne({ _id: req?.user.id!});
+    // Assuming you're using auth middleware that sets req.user.id
+    const user = await User.findOne({ _id: req?.user.id!});
 
-//     if (!user) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
+    if (!user) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
-//     const isMatch = await user.comparePassword(currentPassword);
-//     if (!isMatch) {
-//       return res.status(401).json({ message: "Current password is incorrect" });
-//     }
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
 
    
-//     user.password = newPassword; // Will be hashed by pre-save hook
-//     await user.save();
+    user.password = newPassword; // Will be hashed by pre-save hook
+    await user.save();
 
-//     return res.status(200).json({ message: "Password updated successfully" });
+    return res.status(200).json({ message: "Password updated successfully" });
 
-//   } catch (error) {
+  } catch (error) {
 
-//     next(error);
-//   }
-// });
+    next(error);
+  }
+});
 
 
 // router.get("/admin/signup", async (req, res) => {
