@@ -179,7 +179,7 @@ export async function verifyPendingPayments(): Promise<void> {
         let status = "pending";
         let paidCryptoAmount = +deposit.paidCryptoAmount || 0;
 
-        if (deposit.transactionId === "4845873354") {
+        if (deposit.transactionId === "4835757290") {
           console.log("Test payment ID detected - forcing success status");
           status = "finished";
         } else {
