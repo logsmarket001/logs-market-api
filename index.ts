@@ -17,6 +17,7 @@ import chatRoutes from "./routes/chat";
 import webhookRoutes from "./routes/webhook";
 import bodyParser from "body-parser";
 import { startCronJobs } from "./services/cronService";
+import cronRoutes from "./routes/cron";
 // Load environment variables
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/deposits", depositRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/webhook", webhookRoutes);
+app.use("/api/cron", cronRoutes);
 
 app.get("/api", (req: Request, res: Response) => {
   res.json({ message: "SmartRecruit API is running" });
@@ -51,7 +53,7 @@ mongoose
     console.log("Connected to MongoDB");
 
     // Start cron jobs after database connection is established
-    startCronJobs();
+    //startCronJobs();
     console.log("Cron jobs started");
   })
   .catch((err) => console.error("MongoDB connection error:", err));
