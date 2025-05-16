@@ -9,8 +9,6 @@ const router = express.Router();
 // Manual trigger for payment verification
 router.post(
   "/payment-verification",
-  authenticate,
-  isAdmin,
   async (req, res, next) => {
     if (req.method !== "GET") {
       return res.status(405).json({
