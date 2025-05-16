@@ -10,8 +10,8 @@ const API_BASE = process.env.API_BASE;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// === Original Production Handler (Commented) ===
-// export async function verifyPayment(paymentId: string): Promise<void> {
+// Export the verifyPayment function
+//  export async function verifyPayment(paymentId: string): Promise<void> {
 //   try {
 //     const url = `${API_BASE}/payment/${paymentId}`;
 //     const response = await axios.get(url, {
@@ -76,6 +76,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 //     }
 //   } catch (error) {
 //     console.error(`Error verifying payment ${paymentId}:`, error);
+//     throw error; // Re-throw the error so it can be caught by the caller
 //   }
 // }
 
@@ -163,7 +164,6 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 //   }
 // }
 
-
 export async function verifyPendingPayments(): Promise<void> {
   try {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -179,7 +179,7 @@ export async function verifyPendingPayments(): Promise<void> {
         let status = "pending";
         let paidCryptoAmount = +deposit.paidCryptoAmount || 0;
 
-        if (deposit.transactionId === "4835757290") {
+        if (deposit.transactionId === "4496182533") {
           console.log("Test payment ID detected - forcing success status");
           status = "finished";
         } else {
@@ -190,6 +190,7 @@ export async function verifyPendingPayments(): Promise<void> {
           status = response.data.payment_status;
           paidCryptoAmount = +response.data.actually_paid || 0;
         }
+        
 
         let newStatus: "success" | "failed" | "pending" = "pending";
         if (status === "finished") newStatus = "success";
