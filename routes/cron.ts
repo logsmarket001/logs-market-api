@@ -1,58 +1,33 @@
 //@ts-nocheck
 import express from "express";
-import { verifyPayment } from "../services/paymentVerificationService";
+import {
+  verifyPayment,
+  verifyPendingPayments,
+} from "../services/paymentVerificationService";
 import { authenticate, isAdmin } from "../middleware/auth";
 import Deposit from "../models/Deposit";
 
 const router = express.Router();
 
-// Manual trigger for payment verification
-router.post(
-  "/payment-verification",
-  authenticate,
-  isAdmin,
-  async (req, res, next) => {
-    if (req.method !== "GET") {
-      return res.status(405).json({
-        success: false,
-        message: "Method not allowed",
-      });
-    }
-    try {
-      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const pendingDeposits = await Deposit.find({
-        status: "pending",
-        createdAt: { $gte: twentyFourHoursAgo },
-      });
+router.get("/payment-verification", async (req, res, next) => {
+  console.log("Payment verification endpoint hit");
 
-      console.log(`Found ${pendingDeposits.length} pending deposits to verify`);
+  try {
+    // Use the same function that the cron job uses
+    await verifyPendingPayments();
 
-      const results = [];
-      for (const deposit of pendingDeposits) {
-        try {
-          await verifyPayment(deposit.transactionId);
-          results.push({
-            transactionId: deposit.transactionId,
-            status: "processed",
-          });
-        } catch (error) {
-          results.push({
-            transactionId: deposit.transactionId,
-            status: "failed",
-            error: error.message,
-          });
-        }
-      }
-
-      res.status(200).json({
-        success: true,
-        message: `Processed ${pendingDeposits.length} pending deposits`,
-        results,
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.status(200).json({
+      success: true,
+      message: "Payment verification completed successfully",
+    });
+  } catch (error) {
+    console.error("Error in payment verification:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error processing payments",
+      error: error.message,
+    });
   }
-);
+});
 
 export default router;

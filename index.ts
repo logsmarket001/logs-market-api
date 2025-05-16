@@ -54,7 +54,7 @@ mongoose
 
     // Start cron jobs after database connection is established
     //startCronJobs();
-    console.log("Cron jobs started");
+   // console.log("Cron jobs started");
   })
   .catch((err) => console.error("MongoDB connection error:", err));
 
