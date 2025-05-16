@@ -7,7 +7,7 @@ import Deposit from "../models/Deposit";
 const router = express.Router();
 
 // Manual trigger for payment verification
-router.post(
+router.get(
   "/payment-verification",
   async (req, res, next) => {
     if (req.method !== "GET") {
